@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Root Variables ────────────────────────────────────────────────────────── */
+:root {
+  --bg-primary:   #080e1a;
+  --bg-secondary: #0d1526;
+  --bg-card:      rgba(13, 21, 38, 0.8);
+  --border-glow:  rgba(59, 130, 246, 0.25);
+  --text-primary: #e2e8f0;
+  --text-muted:   #64748b;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.04) 0%, transparent 60%);
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+/* ── Glass Card ──────────────────────────────────────────────────────────── */
+.glass-card {
+  background: rgba(13, 21, 38, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.glass-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(59,130,246,0.1);
+}
+
+/* ── Status Glow Effects ─────────────────────────────────────────────────── */
+.glow-healthy  { box-shadow: 0 0 12px rgba(16, 185, 129, 0.35); border-color: rgba(16, 185, 129, 0.4) !important; }
+.glow-warning  { box-shadow: 0 0 12px rgba(245, 158, 11, 0.35); border-color: rgba(245, 158, 11, 0.4) !important; }
+.glow-critical { box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);  border-color: rgba(239, 68, 68, 0.5) !important; animation: criticalPulse 1.5s ease-in-out infinite; }
+
+@keyframes criticalPulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.5); }
+  50%       { box-shadow: 0 0 28px rgba(239, 68, 68, 0.8), 0 0 50px rgba(239, 68, 68, 0.3); }
+}
+
+/* ── Sensor Value Transition ─────────────────────────────────────────────── */
+.sensor-value {
+  transition: color 0.4s ease, transform 0.2s ease;
+  display: inline-block;
+}
+.sensor-value.updated { animation: valueFlash 0.4s ease; }
+@keyframes valueFlash {
+  0%   { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+/* ── Status Badge ────────────────────────────────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.badge-healthy  { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+.badge-warning  { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+.badge-critical { background: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+
+/* ── Priority Badge ──────────────────────────────────────────────────────── */
+.priority-critical { background: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+.priority-high     { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.3); }
+.priority-medium   { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+.priority-low      { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+.sidebar-link:hover {
+  background: rgba(59,130,246,0.08);
+  color: #e2e8f0;
+  border-color: rgba(59,130,246,0.15);
+}
+.sidebar-link.active {
+  background: rgba(59,130,246,0.12);
+  color: #60a5fa;
+  border-color: rgba(59,130,246,0.25);
+}
+
+/* ── Metric Tile ─────────────────────────────────────────────────────────── */
+.metric-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.2s;
+}
+.metric-tile:hover { background: rgba(255,255,255,0.05); }
+
+/* ── Health Ring ─────────────────────────────────────────────────────────── */
+.health-ring-container { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.health-ring-text { position: absolute; text-align: center; }
+
+/* ── Alert Item ──────────────────────────────────────────────────────────── */
+.alert-item {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border-left: 3px solid;
+  background: rgba(255,255,255,0.03);
+  animation: fadeIn 0.3s ease-out;
+}
+.alert-item.critical { border-left-color: #ef4444; background: rgba(239,68,68,0.06); }
+.alert-item.warning  { border-left-color: #f59e0b; background: rgba(245,158,11,0.06); }
+
+/* ── Chart Tooltip ───────────────────────────────────────────────────────── */
+.custom-tooltip {
+  background: rgba(13,21,38,0.95);
+  border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+/* ── Animated Dot ────────────────────────────────────────────────────────── */
+.live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+/* ── Page Fade ───────────────────────────────────────────────────────────── */
+.page-enter { animation: fadeIn 0.35s ease-out; }
