@@ -7,14 +7,13 @@ import AlertPanel from '../components/Alerts/AlertPanel'
 import EquipmentHealth from '../components/Equipment/EquipmentHealth'
 import RecommendationPanel from '../components/Recommendations/RecommendationPanel'
 import FailureTrendChart from '../components/Charts/FailureTrendChart'
-import { fetchAnalytics, fetchUploadedDatasets } from '../services/api'
-import { useUploadedData } from '../hooks/useUploadedData'
-
+import { fetchAnalytics } from '../services/api'
 
 import {
   Thermometer, Activity, Zap, Gauge, Wind, Cpu,
-  ChevronDown, Database, UploadCloud
+  ChevronDown
 } from 'lucide-react'
+
 
 
 const SENSOR_CONFIG = [
@@ -27,42 +26,11 @@ const SENSOR_CONFIG = [
 ]
 
 export default function Dashboard() {
-  const liveData = useSensorData()
+  const { equipmentList, sensorHistory } = useSensorData()
   const { alerts } = useAlerts()
-
-  // DataSource toggle
-  const [dataSource, setDataSource] = useState('live') // 'live' or dataset_id
-  const uploadedData = useUploadedData(dataSource === 'live' ? null : dataSource)
-  const [datasets, setDatasets] = useState([])
-
-  const { equipmentList, sensorHistory } = dataSource === 'live' ? liveData : uploadedData
 
   // Selected equipment tab
   const [selectedEq, setSelectedEq] = useState(null)
-
-  
-  // Analytics summary for uploaded data
-  const [analytics, setAnalytics] = useState(null)
-
-  React.useEffect(() => {
-    const loadDatasets = async () => {
-      try {
-        const res = await fetchUploadedDatasets()
-        setDatasets(res.data.datasets || [])
-      } catch (e) {}
-    }
-    loadDatasets()
-
-    const loadAnalytics = async () => {
-      try {
-        const res = await fetchAnalytics()
-        setAnalytics(res.data.summary)
-      } catch (e) {}
-    }
-    loadAnalytics()
-    const interval = setInterval(loadAnalytics, 10000)
-    return () => clearInterval(interval)
-  }, [])
 
 
 
@@ -94,40 +62,7 @@ export default function Dashboard() {
   return (
     <div className="p-6 flex flex-col gap-6 page-enter">
 
-      {/* ── KPI Row & Data Source Selector ───────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-        <h1 className="text-xl font-bold text-white flex items-center gap-2">
-          <Activity size={20} className="text-blue-400" /> Dashboard
-        </h1>
-
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500 font-medium">Data Source:</span>
-          <div className="relative min-w-[200px]">
-            <select
-              value={dataSource}
-              onChange={e => {
-                setDataSource(e.target.value === 'live' ? 'live' : Number(e.target.value))
-                setSelectedEq(null)
-              }}
-              className="appearance-none w-full pl-3 pr-8 py-2 rounded-lg text-xs font-bold cursor-pointer transition-colors"
-              style={{
-                background: dataSource === 'live' ? 'rgba(16,185,129,0.1)' : 'rgba(139,92,246,0.1)',
-                border: `1px solid ${dataSource === 'live' ? 'rgba(16,185,129,0.3)' : 'rgba(139,92,246,0.3)'}`,
-                color: dataSource === 'live' ? '#10b981' : '#a78bfa',
-              }}
-            >
-              <option value="live">🟢 Live Simulation Stream</option>
-              {datasets.map(d => (
-                <option key={d.id} value={d.id}>
-                  📁 {d.original_name} ({d.row_count} rows)
-                </option>
-              ))}
-            </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />
-          </div>
-        </div>
-      </div>
-
+      {/* ── KPI Row ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Equipment Monitored', value: equipmentList.length || 4, color: '#3b82f6', sub: 'Active units' },
@@ -227,38 +162,6 @@ export default function Dashboard() {
 
         {/* Right 1/3: Alerts + Health + Recommendations */}
         <div className="flex flex-col gap-4">
-          
-          {/* Uploaded Data Summary */}
-          {analytics && analytics.uploaded_total > 0 && (
-            <div className="glass-card p-5 border-purple-500/20" style={{ background: 'linear-gradient(145deg, rgba(139,92,246,0.05) 0%, rgba(13,21,38,0.5) 100%)' }}>
-              <div className="flex items-center gap-2 mb-3">
-                <UploadCloud size={16} className="text-purple-400" />
-                <h3 className="text-sm font-semibold text-white">Uploaded Data ML Results</h3>
-              </div>
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                <div className="p-2 rounded-lg bg-white/5 border border-white/5">
-                  <p className="text-[10px] text-slate-400">Total Rows</p>
-                  <p className="text-lg font-bold text-white">{analytics.uploaded_total}</p>
-                </div>
-                <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <p className="text-[10px] text-green-400/70">Healthy</p>
-                  <p className="text-lg font-bold text-green-400">{analytics.uploaded_healthy}</p>
-                </div>
-                <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                  <p className="text-[10px] text-amber-400/70">Warnings</p>
-                  <p className="text-lg font-bold text-amber-400">{analytics.uploaded_warning}</p>
-                </div>
-                <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                  <p className="text-[10px] text-red-400/70">Critical</p>
-                  <p className="text-lg font-bold text-red-400">{analytics.uploaded_critical}</p>
-                </div>
-              </div>
-              <a href="/upload" className="text-[11px] text-purple-400 hover:text-purple-300 transition-colors flex items-center justify-between w-full bg-purple-500/10 p-2 rounded">
-                View Full Analysis <span>→</span>
-              </a>
-            </div>
-          )}
-
           <EquipmentHealth equipmentList={equipmentList} />
           <AlertPanel alerts={alerts} />
           <RecommendationPanel recommendations={activeRecs} />

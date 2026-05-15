@@ -24,24 +24,4 @@ export const fetchPredictions   = (limit = 100) =>
 export const predictSensor      = (sensorData) =>
   api.post('/predictions/predict', sensorData)
 
-// ── Upload API ─────────────────────────────────────────────────────────────
-export const uploadDataset = (file, onProgress) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post('/upload/', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-    onUploadProgress: (e) => {
-      if (onProgress && e.total) {
-        onProgress(Math.round((e.loaded * 100) / e.total))
-      }
-    },
-  })
-}
-
-export const fetchUploadedDatasets  = () => api.get('/upload/datasets')
-export const fetchUploadedReadings  = (datasetId, limit = 500) =>
-  api.get(`/upload/datasets/${datasetId}/readings`, { params: { limit } })
-export const deleteUploadedDataset  = (datasetId) =>
-  api.delete(`/upload/datasets/${datasetId}`)
-
 export default api

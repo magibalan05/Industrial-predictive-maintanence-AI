@@ -6,7 +6,6 @@ import Dashboard from './pages/Dashboard'
 import Analytics from './pages/Analytics'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
-import UploadPage from './pages/Upload'
 import { useSensorData } from './hooks/useSensorData'
 import { useAlerts } from './hooks/useAlerts'
 
@@ -29,7 +28,6 @@ function AppLayout() {
             <Route path="/"          element={<Dashboard />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/reports"   element={<Reports />} />
-            <Route path="/upload"    element={<UploadPage />} />
             <Route path="/settings"  element={<Settings />} />
           </Routes>
         </main>

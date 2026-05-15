@@ -2,14 +2,13 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, BarChart2, FileText, Settings,
-  Cpu, Zap, Activity, AlertTriangle, Upload
+  Cpu, Zap, Activity, AlertTriangle
 } from 'lucide-react'
 
 const navItems = [
   { to: '/',          icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/analytics', icon: BarChart2,       label: 'Analytics' },
   { to: '/reports',   icon: FileText,        label: 'Reports' },
-  { to: '/upload',    icon: Upload,          label: 'Upload Data' },
   { to: '/settings',  icon: Settings,        label: 'Settings' },
 ]
 

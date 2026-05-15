@@ -10,8 +10,8 @@ from app.routes.sensor_routes import router as sensor_router
 from app.routes.prediction_routes import router as prediction_router
 from app.routes.recommendation_routes import router as recommendation_router
 from app.routes.report_routes import router as report_router
-from app.routes.upload_routes import router as upload_router
 from app.utils.logger import get_logger
+
 
 logger = get_logger(__name__)
 
@@ -63,7 +63,7 @@ app.include_router(sensor_router)
 app.include_router(prediction_router)
 app.include_router(recommendation_router)
 app.include_router(report_router)
-app.include_router(upload_router)
+
 
 
 # ── WebSocket Endpoint ────────────────────────────────────────────────────────
