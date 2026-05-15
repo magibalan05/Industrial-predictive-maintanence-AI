@@ -84,12 +84,17 @@ def process_upload(file_bytes: bytes, filename: str) -> dict:
         if filename.endswith(".xlsx") or filename.endswith(".xls"):
             df = pd.read_excel(io.BytesIO(file_bytes))
         else:
-            df = pd.read_csv(io.BytesIO(file_bytes))
+            # use sep=None to automatically detect comma or semicolon
+            df = pd.read_csv(io.BytesIO(file_bytes), sep=None, engine='python')
     except Exception as e:
         raise ValueError(f"Could not parse file: {e}")
 
     if df.empty:
         raise ValueError("Uploaded file is empty.")
+
+    # Convert all NaN to 0 to prevent ML model crashing
+    df.fillna(0, inplace=True)
+
 
     df = _normalise_columns(df)
     df = _fill_equipment_defaults(df, filename)
@@ -119,8 +124,9 @@ def process_upload(file_bytes: bytes, filename: str) -> dict:
             confidence  = ml["confidence"]
             health_score = compute_health_score(risk_level)
         except Exception as e:
-            logger.warning("ML error on row: %s", e)
+            logger.error("ML error on row %s: %s", sensor, e)
             risk_level = 0; risk_label = "Healthy"; confidence = 0.0; health_score = 100
+
 
         if risk_level == 0: healthy_count  += 1
         elif risk_level == 1: warning_count += 1
