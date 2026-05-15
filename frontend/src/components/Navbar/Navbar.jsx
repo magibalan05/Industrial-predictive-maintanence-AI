@@ -1,5 +1,7 @@
 import React from 'react'
-import { Activity, Bell, Wifi, WifiOff, RefreshCw } from 'lucide-react'
+import { Activity, Bell, Wifi, WifiOff, RefreshCw, Clock } from 'lucide-react'
+
+
 
 const statusConfig = {
   connected:    { icon: Wifi,       color: '#10b981', label: 'Live',         bg: 'rgba(16,185,129,0.12)' },
@@ -18,28 +20,36 @@ export default function Navbar({ wsStatus, unreadCount, onClearAlerts, lastUpdat
       style={{ borderBottom: '1px solid rgba(59,130,246,0.1)', background: 'rgba(8,14,26,0.9)', backdropFilter: 'blur(12px)' }}>
 
       {/* Left: Title */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <div className="live-dot" />
-          <span className="text-sm font-semibold text-white">Real-Time Monitoring</span>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-500/10 border border-blue-500/20 shadow-inner">
+            <Activity size={20} className="text-blue-400" />
+          </div>
+          <div>
+            <span className="text-sm font-bold text-white tracking-tight uppercase block">Industrial Intelligence</span>
+            <span className="text-[9px] text-blue-500 font-bold uppercase tracking-widest">Platform v2.0</span>
+          </div>
         </div>
-        <span className="text-[10px] text-slate-500 hidden md:block">
-          Industrial Predictive Maintenance AI
+        <span className="text-[10px] text-slate-600 hidden lg:block border-l border-white/10 pl-4 py-1">
+          Adaptive Digital Twin Simulation & Explainable AI reasoning
         </span>
       </div>
 
       {/* Right: Status + Bell */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {/* Last update */}
-        <div className="hidden md:flex items-center gap-1.5 text-[11px] text-slate-500">
-          <span>Last update:</span>
-          <span className="font-mono text-slate-400">{time}</span>
+        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5">
+          <Clock size={12} className="text-slate-500" />
+          <div className="flex flex-col">
+            <span className="text-[8px] text-slate-500 leading-none uppercase">Telemetry Sync</span>
+            <span className="text-[10px] font-mono text-slate-400">{time}</span>
+          </div>
         </div>
 
         {/* WS Status */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium"
-          style={{ background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.color}33` }}>
-          <Icon size={12} className={wsStatus === 'connecting' ? 'animate-spin' : ''} />
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
+          style={{ background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.color}44`, boxShadow: `0 0 15px ${cfg.color}11` }}>
+          <Icon size={12} className={wsStatus === 'connecting' ? 'animate-spin' : 'animate-pulse'} />
           {cfg.label}
         </div>
 

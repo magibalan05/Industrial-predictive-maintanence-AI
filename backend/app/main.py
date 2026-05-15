@@ -5,51 +5,52 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config.settings import CORS_ORIGINS
 from app.database.database import init_db
-from app.simulation.realtime_stream import simulation_loop, register_ws, unregister_ws
+from app.simulation.telemetry_stream_engine import (
+    start_digital_twin_stream_loop, register_stream, unregister_stream
+)
 from app.routes.sensor_routes import router as sensor_router
 from app.routes.prediction_routes import router as prediction_router
 from app.routes.recommendation_routes import router as recommendation_router
 from app.routes.report_routes import router as report_router
 from app.utils.logger import get_logger
 
-
 logger = get_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # ── Startup ──────────────────────────────────────────────────────────────
-    logger.info("Starting Industrial Predictive Maintenance AI Backend…")
+    # ── Industry 4.0 Platform Startup ────────────────────────────────────────
+    logger.info("Initializing Adaptive Industrial Intelligence Platform...")
     init_db()
 
-    # Check model exists, train if not
+    # Model Synchronization
     import os
     from app.config.settings import MODEL_PATH
     if not os.path.exists(MODEL_PATH):
-        logger.info("ML model not found — training now…")
+        logger.info("ML Intelligence Model missing — Initiating Training Phase...")
         from app.models.training.train_model import train
         train()
     else:
-        logger.info("ML model found at %s", MODEL_PATH)
+        logger.info("Validated Digital Twin Intelligence Model at %s", MODEL_PATH)
 
-    # Start background simulation loop
-    task = asyncio.create_task(simulation_loop())
-    logger.info("Simulation loop task started.")
+    # Launch Digital Twin Telemetry Engine
+    stream_task = asyncio.create_task(start_digital_twin_stream_loop())
+    logger.info("Telemetry Stream Engine operational.")
 
     yield
 
     # ── Shutdown ─────────────────────────────────────────────────────────────
-    task.cancel()
-    logger.info("Backend shutting down.")
+    stream_task.cancel()
+    logger.info("Industrial Intelligence Platform shutting down.")
 
 
 app = FastAPI(
-    title="Industrial Predictive Maintenance AI",
-    description="Real-Time Sensor Simulation & Failure Prediction System",
-    version="1.0.0",
+    title="Adaptive Industrial Intelligence Platform",
+    description="Digital Twin Simulation & Explainable AI for Predictive Maintenance",
+    version="2.0.0",
     lifespan=lifespan,
 )
 
-# ── CORS ─────────────────────────────────────────────────────────────────────
+# ── CORS Configuration ───────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
@@ -58,38 +59,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── REST Routers ──────────────────────────────────────────────────────────────
-app.include_router(sensor_router)
-app.include_router(prediction_router)
-app.include_router(recommendation_router)
-app.include_router(report_router)
+# ── API Infrastructure ───────────────────────────────────────────────────────
+app.include_router(sensor_router, prefix="/api")
+app.include_router(prediction_router, prefix="/api")
+app.include_router(recommendation_router, prefix="/api")
+app.include_router(report_router, prefix="/api")
 
 
-
-# ── WebSocket Endpoint ────────────────────────────────────────────────────────
+# ── Industrial Telemetry Stream (WebSockets) ─────────────────────────────────
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    register_ws(websocket)
+async def industrial_telemetry_ws(websocket: WebSocket):
+    await register_stream(websocket)
     try:
         while True:
-            # Keep connection alive; data is pushed by simulation_loop
+            # Keep connection alive; clients only receive broadcasts
             await websocket.receive_text()
     except WebSocketDisconnect:
-        unregister_ws(websocket)
-
-
-# ── Health Check ──────────────────────────────────────────────────────────────
-@app.get("/")
-def root():
-    return {
-        "status": "online",
-        "service": "Industrial Predictive Maintenance AI",
-        "version": "1.0.0",
-        "docs": "/docs",
-        "websocket": "ws://localhost:8000/ws",
-    }
-
-@app.get("/health")
-def health():
-    return {"status": "healthy"}
+        await unregister_stream(websocket)
+    except Exception as e:
+        logger.error("WebSocket Error: %s", e)
+        await unregister_stream(websocket)

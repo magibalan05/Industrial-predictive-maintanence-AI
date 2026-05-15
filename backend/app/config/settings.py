@@ -8,6 +8,8 @@ DB_PATH = os.path.join(BASE_DIR, "..", "data", "predictive_maintenance.db")
 # ── Simulation Settings ───────────────────────────────────────────────────────
 SIMULATION_INTERVAL_SECONDS = 2
 ANOMALY_INJECTION_PROBABILITY = 0.15   # 15% chance of anomaly per reading
+SIMULATION_LOAD_FACTOR = 1.0           # Global load multiplier
+INJECT_CRITICAL_FAULT = False          # Manual fault injection toggle
 
 # ── Equipment Types ──────────────────────────────────────────────────────────
 EQUIPMENT_LIST = [

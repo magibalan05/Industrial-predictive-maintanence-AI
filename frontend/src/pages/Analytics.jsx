@@ -39,14 +39,15 @@ export default function Analytics() {
       {/* Summary KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total Predictions',  value: summary.total_predictions  ?? '--', color: '#3b82f6' },
-          { label: 'Average Health',     value: summary.average_health_score ? `${summary.average_health_score}%` : '--', color: '#10b981' },
-          { label: 'Warning Events',     value: summary.warning_count  ?? '--', color: '#f59e0b' },
-          { label: 'Critical Events',    value: summary.critical_count ?? '--', color: '#ef4444' },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="glass-card p-4">
-            <p className="text-xs text-slate-500 mb-1">{label}</p>
-            <p className="text-2xl font-bold" style={{ color }}>{loading ? '…' : value}</p>
+          { label: 'Total Predictions',  value: summary.total_predictions  ?? '--', color: '#3b82f6', sub: 'Inference calls' },
+          { label: 'Average Health',     value: summary.average_health_score ? `${summary.average_health_score}%` : '--', color: '#10b981', sub: 'Fleet condition' },
+          { label: 'Warning Events',     value: summary.warning_count  ?? '--', color: '#f59e0b', sub: 'Detected anomalies' },
+          { label: 'Critical Events',    value: summary.critical_count ?? '--', color: '#ef4444', sub: 'Priority failures' },
+        ].map(({ label, value, color, sub }) => (
+          <div key={label} className="glass-card p-5">
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{label}</p>
+            <p className="text-3xl font-black" style={{ color, fontFamily: "'Inter', sans-serif" }}>{loading ? '…' : value}</p>
+            <p className="text-[10px] text-slate-600 mt-1 font-medium">{sub}</p>
           </div>
         ))}
       </div>

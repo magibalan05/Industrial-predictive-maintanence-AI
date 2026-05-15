@@ -3,9 +3,10 @@ import axios from 'axios'
 const BASE_URL = 'http://localhost:8000'
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: `${BASE_URL}/api`,
   timeout: 30000,   // longer timeout for uploads
 })
+
 
 export const fetchEquipment     = () => api.get('/sensors/equipment')
 export const fetchSensorHistory = (equipmentId, limit = 100) =>

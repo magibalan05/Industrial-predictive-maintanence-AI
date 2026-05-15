@@ -11,8 +11,11 @@ import { fetchAnalytics } from '../services/api'
 
 import {
   Thermometer, Activity, Zap, Gauge, Wind, Cpu,
-  ChevronDown
+  ChevronDown, Info, Clock, RefreshCw
 } from 'lucide-react'
+
+
+
 
 
 
@@ -26,13 +29,11 @@ const SENSOR_CONFIG = [
 ]
 
 export default function Dashboard() {
-  const { equipmentList, sensorHistory } = useSensorData()
+  const { equipmentList, sensorHistory, wsStatus } = useSensorData()
   const { alerts } = useAlerts()
 
   // Selected equipment tab
   const [selectedEq, setSelectedEq] = useState(null)
-
-
 
   // Use first equipment by default
   const activeEq = useMemo(() => {
@@ -40,6 +41,24 @@ export default function Dashboard() {
     if (selectedEq) return equipmentList.find(e => e.sensor?.equipment_id === selectedEq) || equipmentList[0]
     return equipmentList[0]
   }, [equipmentList, selectedEq])
+
+  if (equipmentList.length === 0 && wsStatus !== 'connected') {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-16 h-16 rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6 animate-pulse">
+          <Activity size={32} className="text-blue-400" />
+        </div>
+        <h2 className="text-xl font-bold text-white mb-2">Initializing Digital Twin Network</h2>
+        <p className="text-sm text-slate-500 max-w-sm">
+          Establishing encrypted WebSocket connection to the Adaptive Industrial Intelligence engine...
+        </p>
+        <div className="mt-8 flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/5 text-[10px] font-bold text-slate-400 tracking-widest uppercase">
+          <RefreshCw size={12} className="animate-spin text-blue-500" />
+          Status: {wsStatus}
+        </div>
+      </div>
+    )
+  }
 
   const activeId     = activeEq?.sensor?.equipment_id
   const activeSensor = activeEq?.sensor || {}
@@ -162,10 +181,40 @@ export default function Dashboard() {
 
         {/* Right 1/3: Alerts + Health + Recommendations */}
         <div className="flex flex-col gap-4">
+          
+          {/* Explainable AI Reasoning Layer */}
+          <div className="glass-card p-5 border-blue-500/20" style={{ background: 'linear-gradient(145deg, rgba(59,130,246,0.05) 0%, rgba(13,21,38,0.5) 100%)' }}>
+            <div className="p-3 rounded-xl bg-white/5 border border-white/5 mb-4">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Clock size={10} className="text-blue-400" />
+                <span className="text-[10px] text-slate-500 uppercase">Est. RUL</span>
+              </div>
+              <p className="text-sm font-bold text-white">
+                {activePred?.estimated_rul_hours || '---'} <span className="text-[10px] font-normal text-slate-500">Hrs</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-2 mb-3">
+              <Cpu size={16} className="text-blue-400" />
+
+              <h3 className="text-sm font-semibold text-white">Explainable AI Insights</h3>
+            </div>
+            {activePred?.reasoning ? (
+              <div className="flex gap-3">
+                <div className="mt-1"><Info size={14} className="text-slate-500" /></div>
+                <p className="text-xs text-slate-400 leading-relaxed italic">
+                  "{activePred.reasoning}"
+                </p>
+              </div>
+            ) : (
+              <p className="text-xs text-slate-600 italic">Initiating AI reasoning sequence...</p>
+            )}
+          </div>
+
           <EquipmentHealth equipmentList={equipmentList} />
           <AlertPanel alerts={alerts} />
           <RecommendationPanel recommendations={activeRecs} />
         </div>
+
       </div>
     </div>
   )

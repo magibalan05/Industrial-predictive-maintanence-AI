@@ -77,21 +77,23 @@ export default function SensorCard({ label, value, unit, icon: Icon, color, stat
       </div>
 
       {/* Value */}
-      <div className="flex items-end justify-between">
+      <div className="flex items-end justify-between mt-1">
         <div>
-          <div className="flex items-baseline gap-1">
-            <span className="sensor-value text-3xl font-bold tracking-tight"
-              style={{ color, fontFamily: "'JetBrains Mono', monospace" }}>
+          <div className="flex items-baseline gap-1.5">
+            <span className="sensor-value text-3xl font-black tracking-tighter"
+              style={{ color, fontFamily: "'Inter', sans-serif" }}>
               {value !== undefined ? (typeof value === 'number' ? value.toFixed(value < 10 ? 2 : 1) : value) : '--'}
             </span>
-            <span className="text-sm text-slate-500 font-medium">{unit}</span>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{unit}</span>
           </div>
-          <div className="flex items-center gap-1 mt-1">
-            <TrendIcon size={11} style={{ color: trend === 'up' ? '#ef4444' : trend === 'down' ? '#10b981' : '#64748b' }} />
-            <span className="text-[10px] text-slate-500">vs prev reading</span>
+          <div className="flex items-center gap-1.5 mt-0.5 px-2 py-0.5 rounded bg-white/5 border border-white/5 w-fit">
+            <TrendIcon size={10} style={{ color: trend === 'up' ? '#ef4444' : trend === 'down' ? '#10b981' : '#64748b' }} />
+            <span className="text-[9px] text-slate-500 font-medium">trend {trend}</span>
           </div>
         </div>
-        <Sparkline data={history} color={color} />
+        <div className="pb-1">
+          <Sparkline data={history} color={color} />
+        </div>
       </div>
     </div>
   )

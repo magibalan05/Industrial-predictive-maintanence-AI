@@ -2,13 +2,15 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, BarChart2, FileText, Settings,
-  Cpu, Zap, Activity, AlertTriangle
+  Cpu, Zap, Activity, AlertTriangle, RefreshCw
 } from 'lucide-react'
+
 
 const navItems = [
   { to: '/',          icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/analytics', icon: BarChart2,       label: 'Analytics' },
   { to: '/reports',   icon: FileText,        label: 'Reports' },
+  { to: '/simulation', icon: RefreshCw,       label: 'Digital Twins' },
   { to: '/settings',  icon: Settings,        label: 'Settings' },
 ]
 

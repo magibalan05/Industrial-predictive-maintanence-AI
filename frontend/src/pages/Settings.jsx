@@ -10,19 +10,15 @@ const EQUIPMENT_OPTIONS = [
 
 function Slider({ label, value, min, max, step = 1, unit, onChange }) {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex justify-between">
-        <span className="text-xs text-slate-400">{label}</span>
-        <span className="text-xs font-mono text-blue-400">{value} {unit}</span>
+    <div className="flex flex-col gap-3 p-4 rounded-2xl bg-white/5 border border-white/5">
+      <div className="flex justify-between items-center">
+        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{label}</span>
+        <span className="text-xs font-black text-blue-400 bg-blue-500/10 px-2 py-1 rounded-lg border border-blue-500/20">{value}{unit}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
-        style={{ accentColor: '#3b82f6', background: `linear-gradient(to right, #3b82f6 ${((value-min)/(max-min))*100}%, #1e293b ${((value-min)/(max-min))*100}%)` }}
+        className="w-full h-1 bg-slate-800 rounded-full appearance-none cursor-pointer accent-blue-500"
       />
-      <div className="flex justify-between text-[10px] text-slate-600">
-        <span>{min}{unit}</span><span>{max}{unit}</span>
-      </div>
     </div>
   )
 }
@@ -83,10 +79,15 @@ export default function Settings() {
 
       {/* Save Button */}
       <button onClick={handleSave}
-        className="self-start flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
-        style={{ background: saved ? 'rgba(16,185,129,0.15)' : 'rgba(59,130,246,0.15)', border: `1px solid ${saved ? 'rgba(16,185,129,0.4)' : 'rgba(59,130,246,0.4)'}`, color: saved ? '#10b981' : '#60a5fa' }}>
+        className="self-start flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all hover:scale-105"
+        style={{ 
+          background: saved ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #3b82f6, #2563eb)', 
+          border: 'none',
+          color: 'white',
+          boxShadow: saved ? '0 4px 15px rgba(16,185,129,0.3)' : '0 4px 15px rgba(59,130,246,0.3)'
+        }}>
         <Save size={14} />
-        {saved ? 'Saved!' : 'Save Settings'}
+        {saved ? 'Settings Applied!' : 'Apply System Changes'}
       </button>
     </div>
   )

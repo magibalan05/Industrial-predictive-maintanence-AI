@@ -1,16 +1,15 @@
 from fastapi import APIRouter
-from app.services.prediction_service import run_prediction
+from app.ml_engine.predictor import predict_industrial_risk
 from app.database.database import fetch_predictions
 from app.utils.logger import get_logger
 
-router = APIRouter(prefix="/predictions", tags=["Predictions"])
+router = APIRouter(prefix="/predictions", tags=["ML Predictions"])
 logger = get_logger(__name__)
 
 @router.post("/predict")
 def predict_endpoint(sensor_data: dict):
-    """Run ML prediction on provided sensor data."""
-    result = run_prediction(sensor_data)
-    return result
+    """Run Adaptive ML inference on provided industrial telemetry."""
+    return predict_industrial_risk(sensor_data)
 
 @router.get("/history")
 def prediction_history(equipment_id: str = None, limit: int = 100):
